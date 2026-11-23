@@ -4,7 +4,6 @@ A mod for Claude Code that keeps a long session on its goal and saves you from r
 
 <img src="docs/demo.svg" alt="The Compass pane in a demo session: the goal, a tree of finished and open work, side topics, and a step waiting for approval" width="372">
 
-*(This is a demo session, not a real project.)*
 
 ## Reply to any thread on the map
 
