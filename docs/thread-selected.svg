@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="372" height="470" viewBox="0 0 372 470" font-family="Segoe UI, -apple-system, Helvetica, Arial, sans-serif">
+  <!-- Mock session for the README. Not a real project. -->
+  <rect width="372" height="470" fill="#1f1f1f"/>
+  <text x="24" y="28" font-size="14" fill="#e6e6e6">Compass</text>
+  <text x="318" y="29" font-size="14" fill="#bdbdbd">⤢</text>
+  <text x="346" y="29" font-size="16" fill="#bdbdbd">✕</text>
+  <line x1="0" y1="44" x2="372" y2="44" stroke="#2e2e2e"/>
+
+  <text x="24" y="80" font-size="14" fill="#f2f2f2">◎ Ship login on mobile</text>
+  <text x="24" y="102" font-size="13" fill="#9a9a9a">6 of 10 done · 1 to approve</text>
+  <text x="24" y="134" font-size="13" fill="#8a8a8a">Tap an item, then type your question about it.</text>
+
+  <g font-size="13.5">
+    <text x="24" y="162" fill="#7a7a7a">├─ <tspan fill="#8f8f8f">✓ Add sign-in screen</tspan></text>
+    <rect x="12" y="172" width="348" height="68" rx="6" fill="#2b2b2b"/>
+    <text x="16" y="190" fill="#7a7a7a"><tspan fill="#f2f2f2">▶ </tspan>├─ <tspan fill="#f2f2f2">✓ Fix token refresh bug</tspan></text>
+    <rect x="54" y="202" width="72" height="28" rx="6" fill="#3a3a3a"/>
+    <text x="90" y="221" font-size="13" fill="#e6e6e6" text-anchor="middle">Reopen</text>
+    <rect x="134" y="202" width="56" height="28" rx="6" fill="#3a3a3a"/>
+    <text x="162" y="221" font-size="13" fill="#e6e6e6" text-anchor="middle">Park</text>
+    <rect x="198" y="202" width="60" height="28" rx="6" fill="#3a3a3a"/>
+    <text x="228" y="221" font-size="13" fill="#e6e6e6" text-anchor="middle">Clear</text>
+    <text x="24" y="262" fill="#7a7a7a">│  └─ <tspan fill="#8f8f8f">✓ Add test for expired token</tspan></text>
+    <text x="24" y="286" fill="#7a7a7a">├─ <tspan fill="#f2f2f2">● Wire up passkeys on iOS</tspan></text>
+    <text x="24" y="310" fill="#7a7a7a">│  └─ <tspan fill="#f2f2f2">○ Run device tests</tspan></text>
+    <text x="24" y="334" fill="#7a7a7a">└─ <tspan fill="#f2f2f2">○ Update release notes</tspan></text>
+  </g>
+
+  <line x1="24" y1="362" x2="348" y2="362" stroke="#2e2e2e"/>
+  <g font-size="12.5" fill="#a8a8a8">
+    <text x="24" y="386"><tspan fill="#e6e6e6">Reopen</tspan> / <tspan fill="#e6e6e6">Done</tspan>: tell Claude it isn't finished, or is.</text>
+    <text x="24" y="408"><tspan fill="#e6e6e6">Park</tspan> / <tspan fill="#e6e6e6">Resume</tspan>: set it aside, or bring it back.</text>
+    <text x="24" y="430"><tspan fill="#e6e6e6">View</tspan>: open a subagent's work (subagent items).</text>
+    <text x="24" y="452"><tspan fill="#e6e6e6">Clear</tspan>: unselect, so messages go to the session.</text>
+  </g>
+</svg>

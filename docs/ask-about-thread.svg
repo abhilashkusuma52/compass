@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="250" viewBox="0 0 720 250" font-family="Segoe UI, -apple-system, Helvetica, Arial, sans-serif">
+  <!-- Mock session for the README. Not a real project. -->
+  <rect width="720" height="250" fill="#1a1a1a"/>
+  <rect x="16" y="14" width="688" height="96" rx="10" fill="#262626"/>
+  <text x="32" y="44" font-size="14" fill="#a8a8a8">◎ Ship login on mobile · 6/10 done</text>
+  <text x="300" y="44" font-size="14" fill="#f2f2f2">▶ Asking about: Fix token refresh bug</text>
+  <g font-size="13" fill="#e6e6e6" text-anchor="middle">
+    <rect x="32" y="62" width="56" height="30" rx="6" fill="#3a3a3a"/><text x="60" y="82">Clear</text>
+    <rect x="96" y="62" width="52" height="30" rx="6" fill="#3a3a3a"/><text x="122" y="82">Map</text>
+    <rect x="156" y="62" width="46" height="30" rx="6" fill="#3a3a3a"/><text x="179" y="82">Off</text>
+    <rect x="210" y="62" width="66" height="30" rx="6" fill="#3a3a3a"/><text x="243" y="82">Got it</text>
+    <rect x="284" y="62" width="58" height="30" rx="6" fill="#3a3a3a"/><text x="313" y="82">More</text>
+  </g>
+
+  <rect x="16" y="122" width="688" height="56" rx="10" fill="#262626" stroke="#3a3a3a"/>
+  <text x="34" y="156" font-size="14.5" fill="#f2f2f2">why did this break only on Android?<tspan fill="#8a8a8a">|</tspan></text>
+  <text x="680" y="156" font-size="16" fill="#bdbdbd" text-anchor="end">↵</text>
+
+  <g font-size="12.5" fill="#a8a8a8">
+    <text x="20" y="204"><tspan fill="#e6e6e6">Clear</tspan> unselect the thread · <tspan fill="#e6e6e6">Map</tspan> open the map · <tspan fill="#e6e6e6">Off</tspan> turn Compass off for this session</text>
+    <text x="20" y="226"><tspan fill="#e6e6e6">Got it</tspan> tell Claude you read the answer, no recap needed · <tspan fill="#e6e6e6">More</tspan> ask Claude to explain its last answer in detail</text>
+  </g>
+</svg>

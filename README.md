@@ -10,6 +10,16 @@ A mod for Claude Code that keeps a long session on its goal and saves you from r
 
 Tap an item on the map, then type. It works like replying to one message in a chat thread: Claude knows which piece of work you mean, even if it came up an hour ago and the conversation has moved on.
 
+**1. Tap a thread.** It's highlighted and shows what you can do with it:
+
+<img src="docs/thread-selected.svg" alt="A map item selected, with Reopen, Park and Clear buttons under it" width="372">
+
+**2. Type your question.** The bar above the message box shows which thread you're asking about:
+
+<img src="docs/ask-about-thread.svg" alt="The bar above the message box reads 'Asking about: Fix token refresh bug', with Clear, Map, Off, Got it and More buttons, and a question typed in the message box" width="720">
+
+*(Demo session, not a real project.)*
+
 - No need to re-explain or scroll back. Tap **Fix token refresh bug** and ask *"why did this break?"*, and Claude answers about that fix.
 - Follow-up work goes under the item you tapped. Tap **Wire up passkeys on iOS** and say *"also add Android"*, and the new work shows on the map as a child of that item, so related work stays together.
 - Your message stays short. Compass adds a hidden line naming the selected item; you just type the question.
@@ -48,6 +58,8 @@ New sessions start with Compass off unless you run `/compass default on`. Sessio
 ## Install
 
 Compass is a Claude Code plugin with a hooks module, so it needs a Claude Code build that supports mods. The map pane shows in the desktop app's Code tab.
+
+Where an organization manages Claude Code, the short-answer rules and the "asking about" line only run if the organization lists Compass in its managed settings.
 
 ```
 /plugin marketplace add abhilashkusuma52/compass
