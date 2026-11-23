@@ -1,10 +1,18 @@
 # Compass
 
-A mod for Claude Code that keeps a long session on its goal and saves you from reading long text.
+A mod for Claude Code that keeps a long session on its goal and saves you from reading long text. It maps the session as threads of work, and you can tap any thread to ask Claude about it, like replying to one message in a chat.
 
 <img src="docs/demo.svg" alt="The Compass pane in a demo session: the goal, a tree of finished and open work, side topics, and a step waiting for approval" width="372">
 
 *(This is a demo session, not a real project.)*
+
+## Reply to any thread on the map
+
+Tap an item on the map, then type. It works like replying to one message in a chat thread: Claude knows which piece of work you mean, even if it came up an hour ago and the conversation has moved on.
+
+- No need to re-explain or scroll back. Tap **Fix token refresh bug** and ask *"why did this break?"*, and Claude answers about that fix.
+- Follow-up work goes under the item you tapped. Tap **Wire up passkeys on iOS** and say *"also add Android"*, and the new work shows on the map as a child of that item, so related work stays together.
+- Your message stays short. Compass adds a hidden line naming the selected item; you just type the question.
 
 ## What it does
 
@@ -14,7 +22,7 @@ A mod for Claude Code that keeps a long session on its goal and saves you from r
 - **Drift check.** When a message starts something unrelated to the goal, Claude adds it as a side item and asks "park it or go?" before starting it.
 - **Short answers.** Claude opens every reply with at most three short lines: what happened, and what's next or what it needs.
 - **Approve ahead.** Claude lists the steps that will need your approval under *Coming up*. You can approve them while it works, so the step runs without a prompt later. An approval covers one exact command prefix or one folder.
-- **Tap to ask.** Tap an item, then type: your message goes to Claude as being about that item.
+- **Tap to ask.** Tap any item and type to reply to that thread (see above).
 
 ## Safety rules
 
