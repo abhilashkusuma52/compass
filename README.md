@@ -42,6 +42,29 @@ Tap an item on the map, then type. It works like replying to one message in a ch
 - A bare name like `src` approves only that path, not every `src` folder on disk.
 - Subagents can't change the map.
 
+## What Compass reads, sends and decides
+
+Compass has no server and makes no network calls of its own. Everything it sends goes to Claude, through Claude Code's own model calls, under your existing account.
+
+**What it reads**
+- The conversation in the current session (your messages, Claude's replies, and the names of tools Claude used), to draw the map. Compass skips subagent messages and its own `[Compass]` notes.
+- Its own saved state for the session (goal, map, steps) and one saved setting: whether new sessions start with Compass on.
+
+**What it sends to a model**
+- **Map drawing.** After each reply, and about every 2 minutes during a long turn, Compass sends the current goal, the map, and an excerpt of what was said since the last update (each message cut to 500 characters, at most 8,000 characters in all) to Claude Haiku. Haiku answers with the updated map as JSON. When you open the map or tap **Map so far**, Compass asks a fork of the session, with no tools, to draw the map from the conversation instead. On a reopened session with nothing to fork, it sends Haiku an excerpt of the saved conversation.
+- Nothing is sent anywhere else, and the map stays inside the session.
+
+**What it adds to your prompts**
+- **Rules for Claude** (`prompt.compose`): while Compass is on, it adds one fixed block of instructions to the session's system prompt: keep the map current, flag side topics, list steps that need approval, and keep replies short. You can read the full text in `RULES` in `hooks/register.tsx`.
+- **The selected thread** (`prompt.submit`): when an item is selected on the map, Compass adds one hidden line to your message: `[Compass] The person selected the step "<title>" (<status>) in the map: this message is about it.` Your own text isn't changed.
+- **Button presses**: **More** sends the message *"Explain your last answer in more detail."* as you. Item buttons (Reopen, Done, Park, Resume) and **Got it** add one short note to the conversation telling Claude what you pressed, for example `Parked: "<title>". Don't work on it now.`
+
+**What it decides**
+- **Permissions** (`tool.check`): Compass runs after your own permission rules. It only steps in when the answer would be "ask", and changes it to "allow" only for a step you approved ahead in the pane. It never changes a "deny", never applies to risky steps (see Safety rules above), and doesn't run while Compass is off. Each run it allows is listed in the pane.
+- **Its own tool** (`mcp__compass__update`): Compass registers this tool so Claude can update the map, and answers the calls itself. It handles no other tool. Calls from subagents are refused without changing anything.
+- **Subagents** (`agent.spawn`): when Claude starts a subagent, Compass adds it to the map. It never changes or blocks the subagent. **View** on a subagent item opens that subagent's transcript in the app.
+- **Scheduled sessions**: a session started by a scheduled task stays off unless you turn Compass on.
+
 ## Commands
 
 | Command | What it does |

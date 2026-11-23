@@ -2,5 +2,9 @@
   "name": "compass",
   "version": "0.1.0",
   "description": "Keeps a session on its goal: a goal band, a map pane of branches, short answers, and pre-approving the next steps.",
+  "author": { "name": "abhilashkusuma52", "url": "https://github.com/abhilashkusuma52" },
+  "homepage": "https://github.com/abhilashkusuma52/compass",
+  "repository": "https://github.com/abhilashkusuma52/compass",
+  "license": "MIT",
   "types": "./types/index.d.ts"
 }
