@@ -18,7 +18,6 @@ Tap an item on the map, then type. It works like replying to one message in a ch
 
 <img src="docs/ask-about-thread.svg" alt="The bar above the message box reads 'Asking about: Fix token refresh bug', with Clear, Map, Off, Got it and More buttons, and a question typed in the message box" width="720">
 
-*(Demo session, not a real project.)*
 
 - No need to re-explain or scroll back. Tap **Fix token refresh bug** and ask *"why did this break?"*, and Claude answers about that fix.
 - Follow-up work goes under the item you tapped. Tap **Wire up passkeys on iOS** and say *"also add Android"*, and the new work shows on the map as a child of that item, so related work stays together.
