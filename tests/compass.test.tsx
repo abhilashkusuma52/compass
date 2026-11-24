@@ -23,7 +23,7 @@ function engine(on: Parameters<Parameters<typeof test>[1]>[1]) {
   on('session.start', (_, e) => ({ cwd: e.cwd }))
   on('tool.check', () => ({ decision: 'ask' as const }))
   on('ui.toast', () => ({ value: undefined }) as never)
-  on('store.get', () => ({ value: undefined }))
+  on('store.get', (_, e: any) => ({ value: e?.key === 'defaultOn' ? true : undefined }))
 }
 
 test('Claude fills the map and the pane draws it on every surface', async ($, on) => {

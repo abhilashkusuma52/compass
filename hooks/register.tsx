@@ -532,7 +532,8 @@ export const register: Register = on => {
       description:
         'Open the Compass map. Also: map, on, off, default on, default off, reset, goal <text>',
     })
-    if ((await $.store.get('defaultOn')) === false) {
+    // Compass starts off unless the person ran /compass default on.
+    if ((await $.store.get('defaultOn')) !== true) {
       await update($, isOff, () => true)
     }
     if (!(await read($, isOff))) {

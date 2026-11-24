@@ -30,7 +30,7 @@ function engine(on: Parameters<Parameters<typeof test>[1]>[1], withStore = true)
   on('session.start', (_, e) => ({ cwd: e.cwd }))
   on('tool.check', () => ({ decision: 'ask' as const }))
   on('ui.toast', () => ({ value: undefined }) as never)
-  if (withStore) on('store.get', () => ({ value: undefined }))
+  if (withStore) on('store.get', (_, e: any) => ({ value: e?.key === 'defaultOn' ? true : undefined }))
 }
 const usage = { input_tokens: 1, output_tokens: 1, cache_creation_input_tokens: 0, cache_read_input_tokens: 0 }
 const start = ($: any) => $.session.start({ cwd: '/', surface: 'desktop', isInteractive: true })
@@ -371,6 +371,15 @@ test('C3 pane taps send [Compass] notes to Claude', async ($, on) => {
 test('C4 default off: a new session starts with Compass off', async ($, on) => {
   engine(on, false)
   mock.store(on, { defaultOn: false })
+  await start($)
+  const ui = await $.ui.mount(BAND)
+  expect((await ui.find({ type: 'Text', text: /◎/ }))?.text).toBe('◎ Compass is off in this session')
+  await ui.unmount()
+})
+
+test('C4b no default set: a new session starts with Compass off', async ($, on) => {
+  engine(on, false)
+  mock.store(on, {})
   await start($)
   const ui = await $.ui.mount(BAND)
   expect((await ui.find({ type: 'Text', text: /◎/ }))?.text).toBe('◎ Compass is off in this session')
