@@ -82,10 +82,32 @@ Compass is a Claude Code plugin with a hooks module, so it needs a Claude Code b
 
 Where an organization manages Claude Code, the short-answer rules and the "asking about" line only run if the organization lists Compass in its managed settings.
 
+Install it from this GitHub repository, in your shell:
+
 ```
-/plugin marketplace add abhilashkusuma52/compass
-/plugin install compass@local-mods
+claude plugin marketplace add abhilashkusuma52/compass
+claude plugin install compass@compass
 ```
+
+Inside a session, `/plugin marketplace add abhilashkusuma52/compass` and `/plugin install compass@compass` do the same.
+
+### Stay on the latest version
+
+Claude Code doesn't auto-update third-party marketplaces unless you turn it on. Turn it on once, either way:
+
+- In a session, run `/plugin`, open **Marketplaces**, select **compass**, and turn on auto-update.
+- Or add `"autoUpdate": true` to the `compass` entry under `extraKnownMarketplaces` in `~/.claude/settings.json`:
+
+  ```json
+  "compass": {
+    "source": { "source": "github", "repo": "abhilashkusuma52/compass" },
+    "autoUpdate": true
+  }
+  ```
+
+With auto-update on, Claude Code checks for new commits in the background a few minutes after the first message of a session. When it finds one, run `/reload-plugins` or start a new session. To update by hand instead, run `claude plugin update compass@compass`.
+
+`plugin.json` has no `version` field on purpose: Claude Code then uses the git commit as the version, so every change merged to `main` reaches users. Don't add a `version` unless you also bump it on every change.
 
 ## Develop
 
