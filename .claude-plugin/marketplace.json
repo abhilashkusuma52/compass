@@ -1,5 +1,5 @@
 {
-  "name": "local-mods",
+  "name": "compass",
   "owner": { "name": "Compass contributors" },
   "plugins": [{ "name": "compass", "source": "./" }]
 }
