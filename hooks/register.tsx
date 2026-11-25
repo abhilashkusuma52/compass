@@ -149,7 +149,12 @@ function matches(step: Step, tool: string, input: unknown): boolean {
   return false
 }
 
-function mergeBranches(list: Branch[], incoming: unknown, under: string | null = null): Branch[] {
+function mergeBranches(
+  list: Branch[],
+  incoming: unknown,
+  under: string | null = null,
+  anchor?: string,
+): Branch[] {
   if (!Array.isArray(incoming)) return list
   const out = [...list]
   for (const item of incoming as Loose[]) {
@@ -179,6 +184,7 @@ function mergeBranches(list: Branch[], incoming: unknown, under: string | null =
         status: status ?? 'todo',
         kind: kind ?? 'stem',
         ...(parent ? { parentId: parent } : {}),
+        ...(anchor ? { messageId: anchor } : {}),
       })
     }
   }
@@ -282,7 +288,12 @@ ${
 
 // Lays the map out as the fork drafted it: its order, its kinds, one item per piece of
 // work. Items it reused keep their ids (and a subagent link); pending work it left out stays.
-function redraw(list: Branch[], listed: Loose[], under: string | null = null): Branch[] {
+function redraw(
+  list: Branch[],
+  listed: Loose[],
+  under: string | null = null,
+  anchor?: string,
+): Branch[] {
   const out: Branch[] = []
   const used = new Set<string>()
   listed.slice(0, 15).forEach((item, i) => {
@@ -313,6 +324,7 @@ function redraw(list: Branch[], listed: Loose[], under: string | null = null): B
         status,
         kind,
         ...(parent ? { parentId: parent } : {}),
+        ...(anchor ? { messageId: anchor } : {}),
       })
     }
   })
@@ -461,7 +473,8 @@ async function liveMap($: Dollar): Promise<string> {
     const newGoal = text(parsed.goal)
     if (newGoal !== '' && !(await read($, isGoalPinned))) await update($, goal, () => cut(newGoal, 80))
     const listed = Array.isArray(parsed.branches) ? (parsed.branches as Loose[]) : []
-    if (listed.length > 0) await update($, branches, list => redraw(list, listed, underId))
+    const anchor = await latestPrompt($)
+    if (listed.length > 0) await update($, branches, list => redraw(list, listed, underId, anchor))
     lastMappedCount = all.length
     lastMappedAt = await $.clock.now()
 
@@ -471,6 +484,69 @@ async function liveMap($: Dollar): Promise<string> {
   } finally {
     isMapping = false
   }
+}
+
+type Said = { role: string; text: string; uuid?: string; agentId?: string }
+
+const isPersonPrompt = (r: Said) =>
+  r.role === 'user' && r.agentId === undefined && r.text.trim() !== '' && !r.text.startsWith('[Compass]')
+
+// The id of the person's latest prompt: where work that starts now began.
+async function latestPrompt($: Dollar): Promise<string | undefined> {
+  try {
+    const rows = (await $.session.messages({ last: 40 })) as unknown as Said[]
+    return [...rows].reverse().find(r => isPersonPrompt(r) && r.uuid !== undefined)?.uuid
+  } catch {
+    return undefined
+  }
+}
+
+// Where a branch happened: the message it was stamped with, else the message whose
+// words best match its title (for items drawn from an older conversation).
+async function whereItHappened($: Dollar, b: Branch): Promise<string[]> {
+  const found: string[] = b.messageId !== undefined ? [b.messageId] : []
+  try {
+    const rows = ((await $.session.messages({ last: 400 })) as unknown as Said[]).filter(
+      r => r.uuid !== undefined && r.agentId === undefined && r.text.trim() !== '',
+    )
+    const want = new Set(words(b.title))
+    let best: Said | undefined
+    let bestScore = 0
+    for (const r of rows) {
+      const have = new Set(words(r.text.slice(0, 2_000)))
+      let score = 0
+      for (const w of want) if (have.has(w)) score += 1
+      // The person's words come first; Claude's reply is the fallback.
+      if (isPersonPrompt(r)) score += 0.5
+      if (score > bestScore) {
+        best = r
+        bestScore = score
+      }
+    }
+    if (best?.uuid !== undefined && bestScore >= 1 && !found.includes(best.uuid)) found.push(best.uuid)
+  } catch {
+    // No transcript to search; the stamp alone is tried.
+  }
+
+  return found
+}
+
+async function takeMeThere($: Dollar, b: Branch) {
+  const places = await whereItHappened($, b)
+  let why = 'no message found for it'
+  for (const id of places) {
+    try {
+      const moved = await $.ui.scroll({ to: { requestId: id }, block: 'start' })
+      if (moved.deny === undefined) {
+        $.ui.toast(`Showing where "${cut(b.title, 30)}" began`)
+        return
+      }
+      why = moved.deny
+    } catch (err) {
+      why = err instanceof Error ? err.message : 'scrolling is not available here'
+    }
+  }
+  $.ui.toast(`Couldn't jump there (${why})`)
 }
 
 // Notes where the conversation stood when the full map was drawn, so live updates read on from there.
@@ -601,7 +677,8 @@ export const register: Register = on => {
     const newGoal = text(args.goal)
     if (newGoal !== '') await update($, goal, () => cut(newGoal, 80))
     const underId = await read($, askedUnder)
-    await update($, branches, list => mergeBranches(list, args.branches, underId))
+    const anchor = await latestPrompt($)
+    await update($, branches, list => mergeBranches(list, args.branches, underId, anchor))
     if (args.clearSteps === true) await update($, steps, () => [])
     await update($, steps, list => mergeSteps(list, args.steps))
 
@@ -614,8 +691,9 @@ export const register: Register = on => {
     if (started.deny === undefined && started.agentId && !(await read($, isOff))) {
       const agentId = started.agentId
       const title = cut(text(e.description) || e.subagentType, 60)
+      const anchor = await latestPrompt($)
       await update($, branches, list =>
-        mergeBranches(list, [{ id: `agent-${agentId}`, title, status: 'working' }]).map(b =>
+        mergeBranches(list, [{ id: `agent-${agentId}`, title, status: 'working' }], null, anchor).map(b =>
           b.id === `agent-${agentId}` ? { ...b, agentId } : b,
         ),
       )
@@ -886,6 +964,11 @@ export const register: Register = on => {
                 </Button>
                 {isSelected && (
                   <Box flexDirection="row" gap={1} marginLeft={2 + lead.length}>
+                    <Button
+                      key={`go-${b.id}`}
+                      label="Take me there"
+                      onPress={() => takeMeThere($, b)}
+                    />
                     {b.status === 'done' ? (
                       <Button
                         key={`reopen-${b.id}`}

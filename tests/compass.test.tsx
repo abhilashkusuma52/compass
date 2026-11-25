@@ -16,13 +16,16 @@ const PANE = {
 
 const TOOL = 'mcp__compass__update'
 
-function engine(on: Parameters<Parameters<typeof test>[1]>[1]) {
+function engine(on: Parameters<Parameters<typeof test>[1]>[1], toasts?: string[]) {
   on('command.register', () => ({ value: { command: 'compass' } }))
   on('tool.register', () => ({ value: { tool: TOOL } }))
   on('ui.open', () => ({ value: { isPlaced: true } }))
   on('session.start', (_, e) => ({ cwd: e.cwd }))
   on('tool.check', () => ({ decision: 'ask' as const }))
-  on('ui.toast', () => ({ value: undefined }) as never)
+  on('ui.toast', (_, e: any) => {
+    toasts?.push(String(e?.text ?? e))
+    return { value: undefined } as never
+  })
   on('store.get', (_, e: any) => ({ value: e?.key === 'defaultOn' ? true : undefined }))
 }
 
@@ -302,5 +305,36 @@ test('work asked with an item selected nests under that item', async ($, on) => 
   expect(child?.text?.indexOf('└─')).toBeGreaterThan(
     (await ui.find({ key: 'b-m' }))?.text?.indexOf('└─') ?? 99,
   )
+  await ui.unmount()
+})
+
+test('"Take me there" looks for the message where the item began, and says so', async ($, on) => {
+  const toasts: string[] = []
+  engine(on, toasts)
+  const asked: unknown[] = []
+  on('session.messages', (_, e: any) => {
+    asked.push(e)
+    return {
+      value: [
+        { role: 'user', text: 'Fix the login token bug please', toolUses: [], uuid: 'm1' },
+        { role: 'assistant', text: 'On it.', toolUses: [], uuid: 'm2' },
+        { role: 'user', text: 'Now add dark mode', toolUses: [], uuid: 'm3' },
+      ],
+    } as never
+  })
+  await $.session.start({ cwd: '/', surface: 'desktop', isInteractive: true })
+  await $.tool.call({
+    tool: TOOL,
+    goal: 'Ship login',
+    branches: [{ id: 'd', title: 'Dark mode', status: 'working' }],
+  } as never)
+
+  const ui = await $.ui.mount({ ...PANE, surface: 'desktop' })
+  await ui.press({ key: 'b-d' })
+  expect(await ui.find({ key: 'go-d' })).toBeDefined()
+  await ui.press({ key: 'go-d' })
+  // It read recent messages (with ids) to find the place, and told the person the outcome.
+  expect(asked.some((a: any) => typeof a?.last === 'number')).toBe(true)
+  expect(toasts.some(t => /Showing where|Couldn't jump there/.test(t))).toBe(true)
   await ui.unmount()
 })
