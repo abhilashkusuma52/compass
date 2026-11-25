@@ -12,6 +12,8 @@ export type Branch = {
   /** The item this one grew out of (a follow-up asked with that item selected). */
   parentId?: string
   agentId?: string
+  /** The transcript message (its uuid) where this work began; "Take me there" scrolls to it. */
+  messageId?: string
 }
 
 /** Bash: a command prefix. Edit: a file or folder path. decision: a question Claude would stop to ask. */
